@@ -26,38 +26,20 @@ def diff(func,x):
     output[0] = output[1]   # close enough
     return output
 
-
-def integrate(func, x, a ,b):
-    #I'm not using this
-    # Replaced with scipy.integrate.simps
-    
-    dx = x[2] - x[0]
-    pieces = int((b - a) / dx)
-    output = 0
-    
-    for i in range(pieces):
-        x0 = x.index(a) + 2*i
-        x1 = x0 + 1
-        x2 = x0 + 2
-        area = (func[x0] + 4*func[x1] + func[x2]) * dx /6
-        output += area
-    
-    return output
-
-def H(func,x,b):
+def H(func,x,b,t):
 
     d1 = diff(func,x)
     d2 = diff(d1,x)
     output = np.zeros(len(x))
 
     for i in range(len(x)):
-        output[i] = (-0.5*d2[i] + 0.5*np.power(x[i],2)*func[i] + b*np.power(x[i],4)*func[i])
+        output[i] = (-0.5*d2[i] + 0.5*np.power(x[i],2)*func[i] )
 
     return output
 
-def matrix_element(phi_i,phi_j,x,L,b):
+def matrix_element(phi_i,phi_j,x,L,b,t):
     # calculates <phi_i | H | phi_j>
-    H_phi_j = H(phi_j,x,b)
+    H_phi_j = H(phi_j,x,b,t)
     f = phi_i * H_phi_j
 
     return scp.integrate.simps(f,x)
@@ -124,11 +106,12 @@ print "Constructed basis in %.3f seconds" %(time.time() - t0)
 #    z.append(math.sin(k))
 
 # Build H_mn
+# This is now only an initial hamiltonian
 
 H_mn = np.zeros((n_basis,n_basis))
 for m in range(n_basis):
     for n in range(n_basis):
-        H_mn[m][n] = matrix_element(basis[m],basis[n],x,L,b)
+        H_mn[m][n] = matrix_element(basis[m],basis[n],x,L,b,0)
 
 E = np.linalg.eig(H_mn)[0]  # Does this preserve the order ?
 #print "Energy eigenvalues: "
@@ -186,7 +169,7 @@ def func(t,y,n):
     for k in range(n):
         term = 0
         for m in range(n):
-            term += y[m] * H_mn[k][m]
+            term += y[m] * matrix_element(basis[k], basis[m], x, L, b, t)
             #y[m] is c_m(t). The function is passed a new y at each time step.
         output.append(-1j*term)
     
@@ -198,7 +181,7 @@ def jac(t,y,n):
     for k in range(n):
         jrow = []
         for m in range(n):
-            jrow.append(-1j*H_mn[k][m])
+            jrow.append(-1j * matrix_element(basis[k], basis[m], x, L, b, t))
         J.append(jrow)
             
     return J
