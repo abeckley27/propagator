@@ -110,7 +110,7 @@ basis = []
 for j in range(n_basis):
     basis.append(tuple(lst_bases[j]))
 
-print "Constructed basis in %.3f seconds" %(time.time() - t0)
+print ("Constructed basis in %.3f seconds" %(time.time() - t0))
 
 #pyplot.plot(x,basis[0],x,basis[1])
 
@@ -135,7 +135,7 @@ E = np.linalg.eig(H_mn)[0]  # Does this preserve the order ?
 #for k in E[:]:
 #    print "%.6f" %(k-0.5)
 
-print "Calculated Hamiltonian matrix in %.3f seconds" %(time.time() - t0)
+print ("Calculated Hamiltonian matrix in %.3f seconds" %(time.time() - t0))
 
 # Generate Psi(x,0)
 trial_fn = []
@@ -163,12 +163,12 @@ avg_x = []
 for k in range(len(x)):
     avg_x.append(trial_fn[k] * x[k] * trial_fn[k])
 
-print "Error in initial position:"
-print abs(a - sum(avg_x) * step)
+print ("Error in initial position:")
+print (abs(a - sum(avg_x) * step))
 
 
 
-print "Calculated initial overlap and wavefunction in %.3f seconds" %(time.time() - t0)
+print ("Calculated initial overlap and wavefunction in %.3f seconds" %(time.time() - t0))
 
 c_n = []
 c_n.append(c_n0)
@@ -214,7 +214,7 @@ while r.successful() and r.t < t_final:
     amplitude = np.dot(np.array(c_n0),  np.array(c_n[-1]))
     P.append(np.power(np.absolute(amplitude),2))
 
-print "Propagated system of ODEs in %.3f seconds" %(time.time() - t0)
+print ("Propagated system of ODEs in %.3f seconds" %(time.time() - t0))
 
 t_tup = tuple(t_lst)[:-1]
 pyplot.plot(t_tup,P)
@@ -254,7 +254,7 @@ for t in range(len(t_tup)):
 pyplot.plot(t_tup,tuple(xt))
 pyplot.title("<x> (t) ")
 pyplot.show()
-print "Calculated average position in %.3f seconds." %(time.time() - t0)
+print ("Calculated average position in %.3f seconds." %(time.time() - t0))
 
 fig = pyplot.figure()
 ax = pyplot.axes(xlim=(-5, 5), ylim=(-0.2, 1.2))
@@ -278,7 +278,7 @@ anim = animation.FuncAnimation(fig, animate, init_func=init,
 
 anim.save('animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
-print "Ran in %.2f seconds." %(time.time() - t0)
+print ("Ran in %.2f seconds." %(time.time() - t0))
 
 
 
